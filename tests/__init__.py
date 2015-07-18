@@ -1,5 +1,4 @@
 import unittest
-from redis import StrictRedis
 from siphon.redis_connection import create_connection
 
 
