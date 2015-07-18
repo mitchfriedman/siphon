@@ -15,3 +15,6 @@ start-redis:
 
 install: develop
 
+nopyc:
+	find . -name '*.pyc' | xargs rm -f || true
+
