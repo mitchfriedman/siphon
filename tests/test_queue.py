@@ -1,36 +1,37 @@
-import unittest
 from siphon.queue import Queue
-from redis import StrictRedis
+from tests import BaseRedisTest
 
 
-class TestQueue(unittest.TestCase):
+class TestQueue(BaseRedisTest):
 
     def setUp(self):
-        self.test_connection = StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+        super().setUp()
 
-    def tearDown(self):
-        self.test_connection.flushall()
+    def _create_queue(self, conn, name=None):
+        name = name or 'foo'
+
+        return Queue(name, connection=conn)
 
     def test_create_queue_no_connection(self):
-        queue = Queue('foo')
+        queue = self._create_queue(None)
 
         self.assertEqual('queue:foo', queue.name)
         self.assertEqual(None, queue.database)
 
     def test_create_queue_with_connection(self):
-        queue = Queue('foo', connection=self.test_connection)
+        queue = self._create_queue(self.test_connection)
 
         self.assertEqual('queue:foo', queue.name)
         self.assertEqual(self.test_connection, queue.database)
 
     def test_add_to_queue(self):
-        queue = Queue('foo', connection=self.test_connection)
+        queue = self._create_queue(self.test_connection)
 
         queue.add_to_queue('ahs71bsa')
         self.assertEqual('ahs71bsa', queue._peek_last_element())
 
     def test_remove_from_queue(self):
-        queue = Queue('foo', connection=self.test_connection)
+        queue = self._create_queue(self.test_connection)
 
         queue.add_to_queue('ahs71bsa')
         queue.add_to_queue('abcdefg')
@@ -41,13 +42,13 @@ class TestQueue(unittest.TestCase):
         self.assertEqual('abcdefg', queue._peek_last_element())
 
     def test_remove_from_empty_queue(self):
-        queue = Queue('foo', connection=self.test_connection)
+        queue = self._create_queue(self.test_connection)
 
         popped = queue.pop()
         self.assertEqual(None, popped)
 
     def test_set_data_hash(self):
-        queue = Queue('foo', connection=self.test_connection)
+        queue = self._create_queue(self.test_connection)
 
         queue.set_hash_data('ahs71bsa', {
             'id': 'ahs71bsa',
@@ -62,7 +63,7 @@ class TestQueue(unittest.TestCase):
         }, queue._get_hash_data('ahs71bsa'))
 
     def test_delete_hash_data(self):
-        queue = Queue('foo', connection=self.test_connection)
+        queue = self._create_queue(self.test_connection)
 
         queue.set_hash_data('ahs71bsa', {
             'id': 'ahs71bsa',
@@ -72,6 +73,3 @@ class TestQueue(unittest.TestCase):
 
         queue._delete_hash_data('ahs71bsa')
         self.assertEqual(None, queue._get_hash_data('ah71bsa'))
-
-    def test_connection(self):
-        self.assertIsNotNone(self.test_connection)

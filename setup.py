@@ -10,7 +10,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'clint', 'flake8',
+        'clint', 'flake8', 'redis',
     ],
     entry_points={
         'console_scripts': [
