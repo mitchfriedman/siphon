@@ -1,9 +1,0 @@
-setup.py
-checkdat/__init__.py
-checkdat/application.py
-checkdat.egg-info/PKG-INFO
-checkdat.egg-info/SOURCES.txt
-checkdat.egg-info/dependency_links.txt
-checkdat.egg-info/entry_points.txt
-checkdat.egg-info/requires.txt
-checkdat.egg-info/top_level.txt
