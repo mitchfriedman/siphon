@@ -2,11 +2,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='checkdat',
+    name='Siphon',
     version='0.0.1',
     author='mitch',
     author_email='mitchfriedman@gmail.com',
-    description='Some awesome chat application',
+    description='Redis-backed python queue',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -14,7 +14,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'check = checkdat.application:run',
+            'siphon = siphon.application:run',
         ]
     },
 )
