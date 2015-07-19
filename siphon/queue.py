@@ -15,6 +15,16 @@ class Queue(object):
         self._push_to_queue(key)
         self._set_hash_data(key, data)
 
+    def dequeue(self):
+        key = self._pop()
+
+        data = self._get_hash_data(key)
+
+        if data is not None:
+            self._delete_hash_data(key)
+
+        return data
+
     def _pop(self):
         return self.database.lpop(self.name)
 
