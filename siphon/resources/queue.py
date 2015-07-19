@@ -26,7 +26,7 @@ class Enqueue(Resource):
 class CreateQueue(Resource):
 
     parser = reqparse.RequestParser()
-    parser.add_argument('queue_name', type=str, location='view_args', required=True, help='The queue you wish to enqueue data in')
+    parser.add_argument('queue_name', type=str, location='form', required=True, help='The queue you wish to enqueue data in')
 
     def post(self, **_):
         args = get_args(self.parser, request)
@@ -35,7 +35,8 @@ class CreateQueue(Resource):
         queue_manager.create_queue(queue_name)
 
         return make_response(json.dumps({
-           'status': 'created'
+            'status': 'created',
+            'queue_name': queue_name,
         }), 201)
 
 class Dequeue(Resource):
@@ -49,4 +50,4 @@ class Dequeue(Resource):
 
         data = queue_manager.dequeue(queue_name)
 
-        return make_response(data, 200)
+        return make_response(json.dumps(data), 200)

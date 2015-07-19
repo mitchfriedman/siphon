@@ -1,6 +1,6 @@
 from flask_restful import Api
 from siphon.resources.errors import get_error
-from siphon.resources.queue import Enqueue
+from siphon.resources.queue import Enqueue, CreateQueue, Dequeue
 
 
 class QueueApi(Api):
@@ -21,3 +21,5 @@ class QueueApi(Api):
 api = QueueApi()
 
 api.add_resource(Enqueue, '/api/enqueue/<string:queue_name>')
+api.add_resource(CreateQueue, '/api/create')
+api.add_resource(Dequeue, '/api/dequeue/<string:queue_name>')
