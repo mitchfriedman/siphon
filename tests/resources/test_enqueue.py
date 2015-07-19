@@ -3,10 +3,7 @@ from flask import json
 from tests.resources.api_test_case import ApiTestCase
 
 
-class TestApi(ApiTestCase):
-
-    def setUp(self):
-        super().setUp()
+class TestEnqueue(ApiTestCase):
 
     @patch('siphon.queue_manager.enqueue')
     def test_enqueue(self, enqueue):
