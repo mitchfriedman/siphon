@@ -5,40 +5,49 @@ class Queue(object):
     """
 
     def __init__(self, name, connection=None):
-        self.database = connection or self._create_connection()
+        if connection is None:
+            raise Exception('No connection given. Exiting')
+
+        self.database = connection
         self.name = '{}:{}'.format('queue', name)
 
-    def _create_connection(self):
-        return None
+    def enqueue(self, key, data):
+        self._push_to_queue(key)
+        self._set_hash_data(key, data)
 
-    def add_to_queue(self, key):
+    def _pop(self):
+        return self.database.lpop(self.name)
+
+    def _push_to_queue(self, key):
         """
-        Enqueue an item with data by it's unique key
+        Enqueue an item by a key (which is assumed to be unique)
         :param key: A unique key to identify this item
-        :param data: A dictionary of key values to set
         :return: No return
 
         ex:
-        add_to_queue('ahs71bsa', {
-            'id': 'ahs71bsa',
-            'creator': 'Mitch',
-            'type': 'email'
-        })
+        add_to_queue('ahs71bsa')
 
-        This will be added to the redis database in 2 ways:
-            - Added to the end of a list (queue.name)
-            - Each item in the data will be hashed and added to a hash
-                located at the name of 'ahs71bsa'
-
+        This will be added to the queue currently in use
         """
 
         self.database.rpush(self.name, key)
 
-    def set_hash_data(self, key, data):
+    def _set_hash_data(self, key, data):
+        """
+        Set the hash data for a given unique key and attributes on that key
+        :param key: A unique key to identify this item
+        :param data: A python dictionary of keys to values to set on the key
+        :return: No return
+        """
         for k, v in data.items():
             self.database.hset(key, k, v)
 
     def _get_hash_data(self, key):
+        """
+        Get a python dictionary of the hash data for a given key
+        :param key: The unique identifier for the key you wish to fetch data for
+        :return: A dictionary of the data, or None
+        """
         data = self.database.hgetall(key)
         if len(data.items()) == 0:
             return None
@@ -46,10 +55,12 @@ class Queue(object):
         return data
 
     def _delete_hash_data(self, key):
+        """
+        Delete the data from the table for a given key
+        :param key: A unique identifier you wish to delete data for
+        :return: No return
+        """
         self.database.delete(key)
-
-    def pop(self):
-        return self.database.lpop(self.name)
 
     def _peek_last_element(self):
         item = self.database.lrange(self.name, -1, -1)

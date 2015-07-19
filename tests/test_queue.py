@@ -1,5 +1,6 @@
 from siphon.queue import Queue
 from tests import BaseRedisTest
+from nose.tools import raises
 
 
 class TestQueue(BaseRedisTest):
@@ -12,6 +13,7 @@ class TestQueue(BaseRedisTest):
 
         return Queue(name, connection=conn)
 
+    @raises(Exception)
     def test_create_queue_no_connection(self):
         queue = self._create_queue(None)
 
@@ -27,16 +29,16 @@ class TestQueue(BaseRedisTest):
     def test_add_to_queue(self):
         queue = self._create_queue(self.test_connection)
 
-        queue.add_to_queue('ahs71bsa')
+        queue._push_to_queue('ahs71bsa')
         self.assertEqual('ahs71bsa', queue._peek_last_element())
 
     def test_remove_from_queue(self):
         queue = self._create_queue(self.test_connection)
 
-        queue.add_to_queue('ahs71bsa')
-        queue.add_to_queue('abcdefg')
+        queue._push_to_queue('ahs71bsa')
+        queue._push_to_queue('abcdefg')
 
-        popped = queue.pop()
+        popped = queue._pop()
 
         self.assertEqual('ahs71bsa', popped)
         self.assertEqual('abcdefg', queue._peek_last_element())
@@ -44,13 +46,13 @@ class TestQueue(BaseRedisTest):
     def test_remove_from_empty_queue(self):
         queue = self._create_queue(self.test_connection)
 
-        popped = queue.pop()
+        popped = queue._pop()
         self.assertEqual(None, popped)
 
     def test_set_data_hash(self):
         queue = self._create_queue(self.test_connection)
 
-        queue.set_hash_data('ahs71bsa', {
+        queue._set_hash_data('ahs71bsa', {
             'id': 'ahs71bsa',
             'creator': 'Mitch',
             'type': 'email'
@@ -65,7 +67,7 @@ class TestQueue(BaseRedisTest):
     def test_delete_hash_data(self):
         queue = self._create_queue(self.test_connection)
 
-        queue.set_hash_data('ahs71bsa', {
+        queue._set_hash_data('ahs71bsa', {
             'id': 'ahs71bsa',
             'creator': 'Mitch',
             'type': 'email'
