@@ -17,12 +17,19 @@ class QueueManager(object):
 
     def enqueue(self, queue_name, key, data):
         queue = self._get_queue(queue_name)
+
+        if queue is None:
+            raise HTTPException('QueueNotFound')
+
         queue.enqueue(key, data)
 
         return True
 
     def dequeue(self, queue_name):
-        queue = self.queues[queue_name]
+        queue = self._get_queue(queue_name)
+
+        if queue is None:
+            raise HTTPException('QueueNotFound')
 
         return queue.dequeue()
 
@@ -30,4 +37,4 @@ class QueueManager(object):
         if queue_name in self.queues:
             return self.queues[queue_name]
 
-        raise HTTPException(description='QueueNotFound')
+        return None

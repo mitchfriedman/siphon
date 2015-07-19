@@ -30,3 +30,7 @@ class TestDequeue(ApiTestCase):
 
         self.assertEqual(404, response.status_code)
 
+    def test_dequeue_unexistant_queue(self):
+        response = self.post('/api/dequeue/foobar')
+
+        self.assertEqual(400, response.status_code)
