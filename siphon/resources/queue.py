@@ -50,4 +50,7 @@ class Dequeue(Resource):
 
         data = queue_manager.dequeue(queue_name)
 
+        if data is None:
+            data = {'message': 'Queue is empty'}
+
         return make_response(json.dumps(data), 200)

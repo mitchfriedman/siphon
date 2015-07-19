@@ -34,3 +34,13 @@ class TestDequeue(ApiTestCase):
         response = self.post('/api/dequeue/foobar')
 
         self.assertEqual(400, response.status_code)
+
+    @patch('siphon.queue_manager.dequeue')
+    def test_dequeue_empty_queue(self, dequeue):
+        dequeue.return_value = None
+        response = self.post('/api/dequeue/foobar')
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual({
+            'message': 'Queue is empty'
+        }, json.loads(response.data))
