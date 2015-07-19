@@ -1,17 +1,7 @@
 from flask_restful import Api
+from siphon.resources.errors import get_error
 from siphon.resources.queue import Enqueue
 
-
-errors = {
-    'QueueNotFound': {
-        'message': "A queue with that given name does not exist",
-        'status': 400,
-    },
-}
-
-
-def get_error(error):
-    pass
 
 class QueueApi(Api):
 
@@ -20,14 +10,14 @@ class QueueApi(Api):
 
     def handle_error(self, e):
         description = getattr(e, 'description', None)
-        if description is not None:
-            if description in errors:
-                return self.make_response({
-                    'message': errors[description]['message'],
-                }, errors[description]['status'])
+        error = get_error(description)
+
+        if error is not None:
+            error_code = error.pop('error', 500)
+            return self.make_response(error, error_code)
 
         return super().handle_error(e)
 
-api = QueueApi(errors=errors)
+api = QueueApi()
 
 api.add_resource(Enqueue, '/api/enqueue/<string:queue_name>')
