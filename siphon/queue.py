@@ -20,6 +20,9 @@ class Queue(object):
 
         data = self._get_hash_data(key)
 
+        if data is None:
+            data = {}
+
         if data is not None:
             self._delete_hash_data(key)
 

@@ -8,7 +8,8 @@ clean:
 develop: venv
 	. venv/bin/activate; \
 	python setup.py develop; \
-	pip install mypy-lang
+	pip install mypy-lang; \
+    pip install -r requirements.txt	
 
 start-redis:
 	redis-server

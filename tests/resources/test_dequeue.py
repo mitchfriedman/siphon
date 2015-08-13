@@ -30,14 +30,16 @@ class TestDequeue(ApiTestCase):
 
         self.assertEqual(404, response.status_code)
 
-    def test_dequeue_unexistant_queue(self):
+    @patch('siphon.queue_manager.dequeue')
+    def test_dequeue_unexistant_queue(self, dequeue):
+        dequeue.return_value = None
         response = self.post('/api/dequeue/foobar')
 
         self.assertEqual(400, response.status_code)
 
     @patch('siphon.queue_manager.dequeue')
     def test_dequeue_empty_queue(self, dequeue):
-        dequeue.return_value = None
+        dequeue.return_value = {}
         response = self.post('/api/dequeue/foobar')
 
         self.assertEqual(200, response.status_code)

@@ -12,7 +12,11 @@ class TestCreateQueue(ApiTestCase):
         self.assertEqual(201, response.status_code)
         self.assertEqual({
             'status': 'created',
-            'queue_name': 'foobar',
+            'id': 'foobar',
+            'queue': {
+                'name': 'foobar'
+             }
+
         }, json.loads(response.data))
 
     def test_create_no_queue_name(self):
