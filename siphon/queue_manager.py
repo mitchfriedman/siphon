@@ -1,6 +1,6 @@
 from siphon.queue import Queue
 from siphon.redis_connection import create_connection
-from werkzeug.exceptions import HTTPException
+from flask import abort
 
 
 class QueueManager(object):
@@ -19,11 +19,9 @@ class QueueManager(object):
         queue = self._get_queue(queue_name)
 
         if queue is None:
-            raise HTTPException('QueueNotFound')
+            abort(404)
 
-        queue.enqueue(key, data)
-
-        return True
+        return queue.enqueue(key, data)
 
     def dequeue(self, queue_name):
         queue = self._get_queue(queue_name)

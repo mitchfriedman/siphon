@@ -7,7 +7,7 @@ class TestEnqueue(ApiTestCase):
 
     @patch('siphon.queue_manager.enqueue')
     def test_enqueue(self, enqueue):
-        response = self.post("/api/enqueue/foo", data={
+        response = self.post("/api/Queues/foo/Enqueue", data={
             'key': 'foo123',
             'creator': 'mitch',
             'type': 'email'
@@ -23,17 +23,8 @@ class TestEnqueue(ApiTestCase):
             'status': 'enqueued'
         }, json.loads(response.data))
 
-    def test_enqueue_missing_queue_name(self):
-        response = self.post('/api/enqueue', data={
-            'id': 'foo123',
-            'creator': 'mitch',
-            'type': 'email'
-        })
-
-        self.assertEqual(404, response.status_code)
-
     def test_enqueue_missing_key(self):
-        response = self.post('/api/enqueue/foo', data={
+        response = self.post('/api/Queues/foo/Enqueue', data={
             'id': 'foo123',
             'creator': 'mitch',
             'type': 'email'
@@ -41,12 +32,9 @@ class TestEnqueue(ApiTestCase):
 
         self.assertEqual(400, response.status_code)
 
-    def test_enqueue_non_existant_queue(self):
-        response = self.post('/api/enqueue/foo', data={
+    def test_enqueue_non_existent_queue(self):
+        response = self.post('/api/Queues/foo/Enqueue', data={
             'key': 'foo123'
         })
 
-        self.assertEqual(400, response.status_code)
-
-        resp = json.loads(response.data)
-        self.assertEqual('A queue with that given name does not exist', resp['message'])
+        self.assertEqual(404, response.status_code)

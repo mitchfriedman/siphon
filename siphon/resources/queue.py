@@ -35,11 +35,7 @@ class CreateQueue(Resource):
         queue_manager.create_queue(queue_name)
 
         return make_response(json.dumps({
-            'status': 'created',
-            'id': queue_name,
-            'queue': {
-                'name': queue_name, 
-            }
+            'name': queue_name, 
         }), 201)
 
 class Dequeue(Resource):
@@ -54,11 +50,10 @@ class Dequeue(Resource):
         data = queue_manager.dequeue(queue_name)
         status_code = 200
 
-        print(data)
-
         if data is None:
             data, status_code = {'message': 'Queue does not exist'}, 400
         elif len(data) == 0:
             data = {'message': 'Queue is empty'}
 
         return make_response(json.dumps(data), status_code)
+

@@ -20,6 +20,6 @@ class QueueApi(Api):
 
 api = QueueApi()
 
-api.add_resource(Enqueue, '/api/enqueue/<string:queue_name>')
-api.add_resource(CreateQueue, '/api/create')
-api.add_resource(Dequeue, '/api/dequeue/<string:queue_name>')
+api.add_resource(Enqueue, '/api/Queues/<string:queue_name>/Enqueue')
+api.add_resource(CreateQueue, '/api/Queues')
+api.add_resource(Dequeue, '/api/Queues/<string:queue_name>/Dequeue')

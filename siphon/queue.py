@@ -1,4 +1,3 @@
-
 class Queue(object):
     """
     Basic queue backed by redis for storing arbitrary job data
@@ -14,6 +13,8 @@ class Queue(object):
     def enqueue(self, key, data):
         self._push_to_queue(key)
         self._set_hash_data(key, data)
+
+        return True
 
     def dequeue(self):
         key = self._pop()
